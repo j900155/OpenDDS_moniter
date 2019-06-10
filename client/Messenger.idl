@@ -1,0 +1,12 @@
+module Messenger
+{
+	#pragma DCPS_DATA_TYPE "Messenger::Message"
+	#pragma DCPS_DATA_KEY "Messenger::Message sendSec"
+	struct Message
+	{
+		string sendData;
+		long sendUsec;
+		long sendSec;
+		long ID;
+	};
+};

@@ -1,0 +1,24 @@
+send to db
+
+architecture
+
+------------------     
+|  clinet       |   
+|  Publisher    |
+-----------------
+       |
+       |
+---------------------
+|  listener         |
+|  clinet-Subscriber|
+|      |            |
+|  socketRecv       |
+---------------------
+       |
+       |
+--------------------
+|   server         |
+|    dataCollect   |
+|       |          |
+|      DB          |
+-------------------
