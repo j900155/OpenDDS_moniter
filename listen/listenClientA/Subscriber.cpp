@@ -18,12 +18,29 @@
 #include <sys/un.h>
 #endif
 
-#include "../listen/recvData.h"
+#include "../recvData.h"
 
 #define socketFile "/var/lib/dds-mointer/server.sock"
 
 int ACE_TMAIN(int argc, char *argv[])
 {
+	struct sockaddr_un addr;
+	char buffer[100];
+	int ret;
+	int client;
+	struct recvData data;
+
+	memset(&addr, 0, sizeof(struct sockaddr_un));
+	addr.sun_family = AF_UNIX;
+	strcpy(addr.sun_path, socketFile);
+
+	client = socket(AF_UNIX, SOCK_STREAM, 0);
+	ret = connect(client, (struct sockaddr *) &addr, sizeof(struct sockaddr_un));
+	if(0 > ret)
+	{
+		std::cerr <<"create socket clinet  fail"<< std::endl;
+		return -1;
+	}
 
 	DDS::DomainParticipantFactory_var dpf = TheParticipantFactoryWithArgs(argc, argv);
 	DDS::DomainParticipant_var participant = dpf-> create_participant(43,
@@ -107,8 +124,7 @@ int ACE_TMAIN(int argc, char *argv[])
 	std::cin >> fileName;
 	fileName +=".txt";
 	fp.open(fileName, std::ios::app);
-	int timeNow;
-	int timeDiff=0;
+	int timeTmp, timeNow;
 	long lenData = 0;
 	std::string sData;
 	long ID[100];
@@ -116,6 +132,8 @@ int ACE_TMAIN(int argc, char *argv[])
 	std::string allID;
 	int i;
 	gettimeofday(&tv,NULL);
+	timeTmp = 0;
+	strcpy(data.topicName,topic_name.c_str());
 	while(true)
 	{
 		error = dataReader->take_next_sample(message, info);
@@ -124,11 +142,14 @@ int ACE_TMAIN(int argc, char *argv[])
 		{
 			if(info.valid_data)	
 			{		
+				gettimeofday(&tv,NULL);
 				std::cout << "message ID " << message.ID;
 				std::cout << "message time " << message.sendSec;
 				std::cout << ";message data " << message.sendData << std::endl;
 				sData = message.sendData._retn();
-				lenData = sData.length();
+				lenData += (long)sData.length();
+				//lenData += message.sendData.length();
+				fp << "message_data," << message.sendData << ",message_time," << message.sendSec  << std::endl;	
 				for(i=0;i<=IDlen;i++)
 				{
 					if(message.ID == ID[i])
@@ -144,13 +165,29 @@ int ACE_TMAIN(int argc, char *argv[])
 					ID[IDlen] = message.ID;
 					IDlen+=1;
 				}
-				gettimeofday(&tv,NULL);
 				timeNow = tv.tv_sec;
-				timeDiff = tv.tv_sec - message.sendSec;
-				timeDiff = timeDiff*1000000 + tv.tv_usec - message.sendUsec;
+				if((timeNow-timeTmp)>10)
+				{
+					for(i=0;i<IDlen;i++)
+					{
+						allID += std::to_string(ID[i])+";";
+					}
+					std::cout << "allID " <<allID << std::endl;
+					strcpy(data.pubID, allID.c_str());
+					data.sendSec = timeNow;
+					data.sendUsec = tv.tv_usec;
+					if(timeTmp ==0)
+					{
+						lenData = 10;
+					}
+					data.dataSize = lenData;
+					std::cout << "data.pubID " << data.pubID << "data.sendSec " << data.sendSec << std::endl;
+					send(client,&data,sizeof(data),0);
+					allID = "";
+					lenData = 0;
+					timeTmp = timeNow;
+				}
 
-				fp << "message_len," << lenData << ",message_sec," << message.sendSec;	
-				fp << "message_usec," << message.sendUsec << ",message_diff," << timeDiff  << std::endl;	
 			}
 		}
 		usleep(delay_us);

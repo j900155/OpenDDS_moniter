@@ -1,0 +1,18 @@
+project(*idl):dcps {
+	requires +=no_opendds_safety_profile
+	TypeSupport_Files {
+		Messenger.idl
+	}
+	custom_only = 1
+}
+project(*subscriber): dcpsexe, dcps_tcp {
+	requires += no_opendds_safety_profile
+	exename = subscriber
+	after += *idl
+	TypeSupport_Files {
+		Messenger.idl
+	}
+	Source_Files {
+		Subscriber.cpp
+	}
+}

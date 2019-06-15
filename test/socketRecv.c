@@ -34,7 +34,8 @@ void *getData(void *vClient)
 			printf("%s\n",data.pubID);
 			printf("%s\n",data.topicName);
 			printf("%ld\n",data.dataSize);
-			printf("%ld\n",data.sendTime);
+			printf("%ld\n",data.sendSec);
+			printf("%ld\n",data.sendUsec);
 		}
 		else
 		{

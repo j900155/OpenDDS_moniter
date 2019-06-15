@@ -49,6 +49,8 @@ def getClientData(conn):
         data["sendUsec"]=arrayData[1]
         data["dataSize"]=arrayData[2]
         data["PubID"]=arrayData[3].split(";")
+        if data["PubID"][-1] == "":
+            del data["PubID"][-1]
         data["topicName"]=arrayData[4]
         print(data["PubID"])
         if "first" in data["PubID"]:

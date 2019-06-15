@@ -1,0 +1,9 @@
+GNUmakefile*
+MessengerC*
+MessengerS*
+MessengerT*
+publisher
+subscriber
+*.txt
+.depend*
+.obj
