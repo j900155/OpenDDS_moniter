@@ -24,16 +24,18 @@ import queue
 saveData = queue.Queue()
 def saveToMongo():
     mongoClinet = pymongo.MongoClient("127.0.0.1",27017)
-    collection = mongoClinet["test"]["test"]
+    collection = mongoClinet["test"]["topicLog"]
     print("saveToMongo")
     while(1):
         data = saveData.get()
         collection.find_one({"topic":data["topicName"]})
 
-        data["insertTIme"] = time.time()
+        data["insertTime"] = time.time()
         print(data)
         collection.insert(data)
 
+def findFirstTopic(topic):
+    print("topic ",topic)
 def getClientData(conn):
     print("getClinetData")
     while(1):
@@ -54,8 +56,8 @@ def getClientData(conn):
         data["topicName"]=arrayData[4]
         print(data["PubID"])
         if "first" in data["PubID"]:
-        #if data["PubID"].find("first"):
             print("first topic {}".format( data["topicName"]))
+            findFirstTopic(data["topicName"])
         saveData.put(data) 
         conn.send(b"OK")
 
