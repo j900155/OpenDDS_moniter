@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+    client:
+        image: opendds:3.10
+        deploy:
+            placement:
+                constraints:
+                    - node.labels == client
+            resources:
+                reservations:
+                    cpus: "2"
+        networks:
+            - host
