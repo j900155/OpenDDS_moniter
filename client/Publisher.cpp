@@ -19,7 +19,7 @@
 #include <unistd.h>
 #endif
 
-char configFile[] = "/home/zack/github/OpenDDS_moniter/client/config.conf";
+char configFile[] = "./config.conf";
 int readConf(char *topic, long *ID, int *delay,char *text)
 {
 	FILE *readFile;

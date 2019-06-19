@@ -18,9 +18,6 @@
 #include <sys/un.h>
 #endif
 
-#include "../listen/recvData.h"
-
-#define socketFile "/var/lib/dds-mointer/server.sock"
 
 int ACE_TMAIN(int argc, char *argv[])
 {
@@ -114,7 +111,11 @@ int ACE_TMAIN(int argc, char *argv[])
 	long ID[100];
 	int IDlen=0;
 	std::string allID;
-	int i;
+	int i,j;
+	int point, newPoint;
+	char *arrayKey[] = {"k1","k2","k3","k4","k5","k6"};
+	int arrayKeyLen = 6;
+	std::string jsonString = "{";
 	gettimeofday(&tv,NULL);
 	while(true)
 	{
@@ -125,25 +126,30 @@ int ACE_TMAIN(int argc, char *argv[])
 			if(info.valid_data)	
 			{		
 				std::cout << "message ID " << message.ID;
-				std::cout << "message time " << message.sendSec;
+				std::cout << "message sec " << message.sendSec;
+				std::cout << "message usec " << message.sendUsec;
 				std::cout << ";message data " << message.sendData << std::endl;
 				sData = message.sendData._retn();
 				lenData = sData.length();
-				for(i=0;i<=IDlen;i++)
+				point = 0;
+				jsonString = "{";
+				for(i=0;i<arrayKeyLen;i++)
 				{
-					if(message.ID == ID[i])
+					jsonString += "\"";
+					jsonString += arrayKey[i];
+					jsonString += "\"";
+					newPoint = sData.find(",", point);
+					for(j=point;j<newPoint;j++)
 					{
-						break;
+						jsonString +=sData[j];
 					}
-
+					if(i != (arrayKeyLen-1))
+					{
+						jsonString +=",";
+					}
 				}
-				
-				if(i > IDlen)
-				{
-					std::cout << "IDlen " << IDlen << " i " << i << std::endl;
-					ID[IDlen] = message.ID;
-					IDlen+=1;
-				}
+				jsonString +="}";
+				std::cout << jsonString << std::endl;
 				gettimeofday(&tv,NULL);
 				timeNow = tv.tv_sec;
 				timeDiff = tv.tv_sec - message.sendSec;
