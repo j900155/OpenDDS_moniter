@@ -173,7 +173,7 @@ ACE_TMAIN(int argc, ACE_TCHAR *argv[])
 	t = tv.tv_sec;
 	while(true)
 	{
-		if((tv.tv_sec - t) > 11)
+		if((tv.tv_sec - t) >= 10)
 		{
 			break;
 		}

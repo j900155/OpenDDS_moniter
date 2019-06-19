@@ -153,8 +153,9 @@ int ACE_TMAIN(int argc, char *argv[])
 				gettimeofday(&tv,NULL);
 				timeNow = tv.tv_sec;
 				timeDiff = tv.tv_sec - message.sendSec;
-				timeDiff = timeDiff*1000000 + tv.tv_usec - message.sendUsec;
+				timeDiff = (timeDiff*1000000) + tv.tv_usec - message.sendUsec;
 
+				fp << "message_ID," << message.ID << ",";	
 				fp << "message_len," << lenData << ",message_sec," << message.sendSec;	
 				fp << "message_usec," << message.sendUsec << ",message_diff," << timeDiff  << std::endl;	
 			}
