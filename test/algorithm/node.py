@@ -14,7 +14,10 @@ class node(object):
         self.limit = limit
         self.task = []
     def getTaskSum(self):
-        return sum(self.task)
+        taskSum = 0
+        for i in self.task:
+            taskSum +=i
+        return taskSum
     def delTask(self,taskIndex):
         del self.task[taskIndex]
     def addTask(self, task):

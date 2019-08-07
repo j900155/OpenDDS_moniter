@@ -1,0 +1,2 @@
+subscriber from client/subscriber
+subscriber do A,b,c to {"A":"A"."b":b,"c":c}

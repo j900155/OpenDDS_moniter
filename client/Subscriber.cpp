@@ -102,7 +102,7 @@ int ACE_TMAIN(int argc, char *argv[])
 	std::string fileName;
 	std::cout << "file name\n";
 	std::cin >> fileName;
-	fileName +=".txt";
+	fileName +=topic_name + ".txt";
 	fp.open(fileName, std::ios::app);
 	int timeNow;
 	int timeDiff=0;
